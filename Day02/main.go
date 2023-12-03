@@ -1,10 +1,12 @@
 package main
 
 import (
+	"AoC23/utils"
 	"fmt"
 )
 
 func part1() {
+	lines := utils.GetLinesFromFile("Day02/input.txt")
 
 }
 func part2() {

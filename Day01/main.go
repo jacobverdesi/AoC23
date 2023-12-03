@@ -1,21 +1,15 @@
 package main
 
 import (
+	"AoC23/utils"
 	"fmt"
-	"os"
-	"path/filepath"
 	"strings"
 	"unicode"
 )
 
 func part1() {
-	// get relative path to input.txt
-	absPath, _ := filepath.Abs("Day01/input.txt")
-	body, _ := os.ReadFile(absPath)
-	bodyString := string(body)
-	lines := strings.FieldsFunc(bodyString, func(r rune) bool {
-		return r == '\n' || r == '\r'
-	})
+	lines := utils.GetLinesFromFile("Day01/input.txt")
+
 	sum := 0
 	for _, line := range lines {
 		digits := make([]int, 0)
@@ -31,14 +25,7 @@ func part1() {
 	fmt.Println(sum)
 }
 func part2() {
-	// get relative path to input.txt
-	absPath, _ := filepath.Abs("Day01/input.txt")
-	body, _ := os.ReadFile(absPath)
-	bodyString := string(body)
-
-	lines := strings.FieldsFunc(bodyString, func(r rune) bool {
-		return r == '\n' || r == '\r'
-	})
+	lines := utils.GetLinesFromFile("Day01/input.txt")
 	sum := 0
 	for _, line := range lines {
 		replacedLine := replaceNumberWords(line)
