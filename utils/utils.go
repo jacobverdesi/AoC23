@@ -7,7 +7,7 @@ import (
 )
 
 func GetLinesFromFile(filename string) []string {
-	absPath, _ := filepath.Abs("Day01/input.txt")
+	absPath, _ := filepath.Abs(filename)
 	body, _ := os.ReadFile(absPath)
 	bodyString := string(body)
 
