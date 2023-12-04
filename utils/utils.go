@@ -16,3 +16,41 @@ func GetLinesFromFile(filename string) []string {
 	})
 	return lines
 }
+
+func FindNthOccurrence(str string, substr string, n int) int {
+	idx := -1
+	for i := 0; i <= n; i++ {
+		idx = strings.Index(str[idx+1:], substr)
+		if idx == -1 {
+			return -1
+		}
+		idx += idx + 1
+	}
+	return idx
+}
+func IndexAll(str string, substr string) []int {
+	idx := -1
+	indices := make([]int, 0)
+	for {
+		idx = strings.Index(str[idx+1:], substr)
+		if idx == -1 {
+			return indices
+		}
+		idx += idx + 1
+		indices = append(indices, idx)
+	}
+
+}
+func GetUniqueChars(input string) string {
+	uniqueChars := make(map[rune]bool)
+	result := ""
+
+	for _, char := range input {
+		if _, exists := uniqueChars[char]; !exists {
+			uniqueChars[char] = true
+			result += string(char)
+		}
+	}
+
+	return result
+}
