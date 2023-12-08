@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"math"
 	"os"
 	"path/filepath"
 	"strings"
@@ -40,6 +41,9 @@ func IndexAll(str string, substr string) []int {
 		indices = append(indices, idx)
 	}
 
+}
+func PowInt(x, y int) int {
+	return int(math.Pow(float64(x), float64(y)))
 }
 func GetUniqueChars(input string) string {
 	uniqueChars := make(map[rune]bool)
