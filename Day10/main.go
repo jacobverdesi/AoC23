@@ -13,6 +13,19 @@ type Pipe struct {
 	Value          string
 }
 
+func oppositeDirection(direction string) string {
+	switch direction {
+	case "N":
+		return "S"
+	case "E":
+		return "W"
+	case "S":
+		return "N"
+	case "W":
+		return "E"
+	}
+	return ""
+}
 func part1() {
 	lines := utils.GetLinesFromFile("Day10/input.txt")
 	pipeMap := make([]Pipe, len(lines[0])*len(lines))
@@ -35,16 +48,16 @@ func part1() {
 				endDirection = "W"
 			case "7":
 				startDirection = "S"
-				endDirection = "E"
+				endDirection = "W"
 			case "F":
 				startDirection = "S"
-				endDirection = "W"
+				endDirection = "E"
 			default:
 				startDirection = ""
 				endDirection = ""
 			}
 			pipeMap[i*len(lines)+j] = Pipe{
-				Index:          0,
+				Index:          i*len(lines) + j,
 				Distance:       -1,
 				StartDirection: startDirection,
 				EndDirection:   endDirection,
@@ -60,23 +73,39 @@ func part1() {
 		}
 	}
 	pipeMap[startIndex].Distance = 0
-	for idx, pipe := range pipeMap {
-		fmt.Printf("%3d", pipe.Distance)
-		if (idx+1)%len(lines) == 0 {
-			fmt.Println()
-		}
-	}
-	pipeQueue := make([]Pipe, 0)
-	pipeQueue = append(pipeQueue, pipeMap[startIndex])
-	for len(pipeQueue) > 0 {
-		currentPipe := pipeQueue[0]
-		pipeQueue = pipeQueue[1:]
-		nextPipeIndex := -1
-		// Assume current Pipe direction is correct
-		if currentPipe.Value == "S" {
 
+	currentPipeIndex := startIndex
+	prevEndDirection := ""
+	if pipeMap[startIndex+1].StartDirection == "W" || pipeMap[startIndex+1].EndDirection == "W" {
+		currentPipeIndex = startIndex + 1
+		prevEndDirection = "E"
+	} else if pipeMap[startIndex-1].StartDirection == "E" || pipeMap[startIndex-1].EndDirection == "E" {
+		currentPipeIndex = startIndex - 1
+		prevEndDirection = "W"
+	} else if pipeMap[startIndex+len(lines)].StartDirection == "N" || pipeMap[startIndex+len(lines)].EndDirection == "N" {
+		currentPipeIndex = startIndex + len(lines)
+		prevEndDirection = "S"
+	} else if pipeMap[startIndex-len(lines)].StartDirection == "S" || pipeMap[startIndex-len(lines)].EndDirection == "S" {
+		currentPipeIndex = startIndex - len(lines)
+		prevEndDirection = "N"
+	} else {
+		panic("No start pipe found")
+	}
+	pipeMap[currentPipeIndex].Distance = 1
+	currentPipe := pipeMap[currentPipeIndex]
+
+	for currentPipe.Value != "S" {
+		nextPipeIndex := -1
+		endDirection := ""
+		if currentPipe.StartDirection == oppositeDirection(prevEndDirection) {
+			endDirection = currentPipe.EndDirection
+		} else if currentPipe.EndDirection == oppositeDirection(prevEndDirection) {
+			endDirection = currentPipe.StartDirection
+		} else {
+			panic("No direction found")
 		}
-		switch currentPipe.EndDirection {
+		// CHECK if next pipe matches current pipe
+		switch endDirection {
 		case "N":
 			nextPipeIndex = currentPipe.Index - len(lines)
 		case "E":
@@ -85,32 +114,20 @@ func part1() {
 			nextPipeIndex = currentPipe.Index + len(lines)
 		case "W":
 			nextPipeIndex = currentPipe.Index - 1
-
 		}
-		// CHECK if next pipe matches current pipe
-
+		prevEndDirection = endDirection
 		nextPipe := pipeMap[nextPipeIndex]
-		if nextPipe.StartDirection == currentPipe.EndDirection {
-			// if connected, add to queue
-			currentPipe.Distance = nextPipe.Distance + 1
-
-			pipeQueue = append(pipeQueue, currentPipe)
-		} else if nextPipe.EndDirection == currentPipe.EndDirection {
-			// if connected, add to queue
-			currentPipe.Distance = nextPipe.Distance + 1
-			// Swap directions
-			nextPipe.EndDirection, nextPipe.StartDirection = currentPipe.StartDirection, currentPipe.EndDirection
-			pipeQueue = append(pipeQueue, currentPipe)
-		}
-
+		pipeMap[nextPipeIndex].Distance = pipeMap[currentPipe.Index].Distance + 1
+		currentPipe = nextPipe
 	}
+
 	for idx, pipe := range pipeMap {
-		fmt.Printf("%3d", pipe.Distance)
+		fmt.Printf("%10d", pipe.Distance)
 		if (idx+1)%len(lines) == 0 {
 			fmt.Println()
 		}
 	}
-	fmt.Println(pipeMap)
+	fmt.Println(pipeMap[currentPipe.Index].Distance / 2)
 }
 func part2() {
 
