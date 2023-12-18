@@ -85,3 +85,30 @@ func PrimeFactors(n int) (pfs []int) {
 
 	return
 }
+
+type Set map[int]struct{}
+
+func (s Set) Add(item int) {
+	s[item] = struct{}{}
+}
+
+func (s Set) Remove(item int) {
+	delete(s, item)
+}
+
+func (s Set) Contains(item int) bool {
+	_, exists := s[item]
+	return exists
+}
+func (s Set) Iterator() <-chan int {
+	ch := make(chan int)
+
+	go func() {
+		defer close(ch)
+		for element := range s {
+			ch <- element
+		}
+	}()
+
+	return ch
+}
